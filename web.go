@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -24,28 +25,16 @@ func main() {
 
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 	http.Handle("/assets/", proxy)
-	http.HandleFunc("/index.html", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-
-  <title>Sprockets and Go</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
-
-  <link rel="stylesheet" href="/assets/`+assets.FindAsset("application.css")+`">
-
-  <!--[if lt IE 9]>
-  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-</head>
-
-<body>
-  <h1>Hello world</h1>
-  <script src="/assets/`+assets.FindAsset("application.js")+`"></script>
-</body>
-</html>`)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		tmpl := template.New("base").Funcs(template.FuncMap{"assets": assets.FindAsset})
+		tmpl, err = tmpl.ParseFiles("./tmpl/index.html")
+		if err != nil {
+			panic(err)
+		}
+		err = tmpl.ExecuteTemplate(w, "index.html", struct{}{})
+		if err != nil {
+			fmt.Println(err)
+		}
 	})
 	err = http.ListenAndServe(":8000", nil)
 	if err != nil {

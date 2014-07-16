@@ -1,1 +1,2 @@
-//= require foo
+//= require skel.min
+//= require init

@@ -8,3 +8,7 @@ There are still many things to tackle:
  2. there is not build out to be able to reference a static manifest file (would be useful for production environments)
  3. this should have some sense of which enviornment it's running in and change the loading behavior based on that
  4. it would be great if the hashed asset name references would change automatically any time the assets change (lazy update references in go)
+
+Web Design by:
+AJ
+n33.co @n33co dribbble.com/n33
